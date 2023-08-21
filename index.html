@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOVOKA | Camarines Norte Sites</title>
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* Set the map container to cover the full screen */
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([14.0788215, 122.6802407], 11); // Centered on specified coordinates with zoom level 11
+
+        // Add the ArcGIS Online World Imagery basemap layer
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }).addTo(map);
+
+        // Load the GeoJSON data from sites.js
+        var script = document.createElement('script');
+        script.src = 'sites.js';
+        script.onload = function () {
+            // Add the GeoJSON layer with white outline using the loaded sitesData
+            var geojsonLayer = L.geoJSON(sitesData, {
+                style: {
+                    color: "white", // White outline
+                    fillOpacity: 0, // No fill
+                    weight: 2 // Outline weight
+                }
+            }).addTo(map);
+
+            // Add popup to each feature
+            geojsonLayer.eachLayer(function (layer) {
+                var properties = layer.feature.properties;
+                var popupContent = '<b>Name:</b> ' + properties.NAME;
+                layer.bindPopup(popupContent);
+            });
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
